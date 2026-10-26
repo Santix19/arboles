@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ArbolAgenda · Árbol AVL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="top">
+  <div class="marca">
+    <div class="logo">🌳</div>
+    <div>
+      <h1>Arbol<span>Agenda</span></h1>
+      <p>Agenda de contactos sobre un <b>Árbol AVL</b> · Estructuras de Datos</p>
+    </div>
+  </div>
+  <label class="switch" title="Cambia entre AVL (auto-balanceado) y ABB simple">
+    <span class="lbl-off">ABB simple</span>
+    <input type="checkbox" id="modo">
+    <span class="riel"><span class="bola"></span></span>
+    <span class="lbl-on">AVL balanceado</span>
+  </label>
+</header>
+
+<main class="grid">
+  <!-- ======== Panel izquierdo ======== -->
+  <aside class="col">
+    <section class="card">
+      <h2>➕ Nuevo contacto</h2>
+      <form id="form-nuevo">
+        <input name="nombre" placeholder="Nombre completo" required>
+        <input name="telefono" placeholder="Teléfono" required>
+        <input name="correo" type="email" placeholder="Correo (opcional)">
+        <select name="categoria">
+          <option>Universidad</option><option>Familia</option>
+          <option>Amigos</option><option>Trabajo</option><option>General</option>
+        </select>
+        <button class="btn primario" type="submit">Insertar en el árbol</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>🔍 Buscar / eliminar</h2>
+      <div class="auto">
+        <input id="q" placeholder="Escribe un nombre…" autocomplete="off">
+        <ul id="sugerencias" hidden></ul>
+      </div>
+      <p id="info-auto" class="mini"></p>
+      <div class="fila">
+        <button class="btn" id="btn-buscar">Buscar</button>
+        <button class="btn peligro" id="btn-eliminar">Eliminar</button>
+      </div>
+      <div id="resultado-busqueda"></div>
+    </section>
+
+    <section class="card">
+      <h2>🔤 Búsqueda por rango</h2>
+      <div class="fila">
+        <input id="desde" placeholder="Desde (ej. A)" maxlength="20">
+        <input id="hasta" placeholder="Hasta (ej. F)" maxlength="20">
+      </div>
+      <button class="btn" id="btn-rango">Listar rango</button>
+      <div id="resultado-rango"></div>
+    </section>
+
+    <section class="card">
+      <h2>📦 Datos</h2>
+      <div class="botonera">
+        <button class="btn" id="btn-demo">Cargar demo</button>
+        <button class="btn" id="btn-peor" title="Inserta los 20 contactos en orden alfabético">Peor caso (A→Z)</button>
+        <a class="btn" href="/api/exportar">Exportar JSON</a>
+        <label class="btn">Importar JSON<input type="file" id="archivo" accept=".json" hidden></label>
+        <button class="btn peligro" id="btn-vaciar">Vaciar</button>
+      </div>
+    </section>
+  </aside>
+
+  <!-- ======== Centro ======== -->
+  <section class="centro">
+    <div class="stats" id="stats"></div>
+
+    <div class="card lienzo-card">
+      <div class="barra">
+        <div class="recorridos">
+          <span class="mini">Recorridos:</span>
+          <button class="chip-btn" data-rec="inorden">Inorden</button>
+          <button class="chip-btn" data-rec="preorden">Preorden</button>
+          <button class="chip-btn" data-rec="postorden">Postorden</button>
+          <button class="chip-btn" data-rec="niveles">Por niveles</button>
+        </div>
+        <div class="controles">
+          <label class="mini">Velocidad <input type="range" id="vel" min="80" max="900" value="420"></label>
+          <label class="mini">Zoom <input type="range" id="zoom" min="40" max="160" value="100"></label>
+        </div>
+      </div>
+      <div class="leyenda">
+        <span><i class="dot raiz"></i>Raíz</span>
+        <span><i class="dot rama"></i>Rama</span>
+        <span><i class="dot hoja"></i>Hoja</span>
+        <span><i class="fbx"></i>Factor de balance</span>
+        <span><i class="fbx malo"></i>Desbalanceado (|FB| &gt; 1)</span>
+      </div>
+      <div class="lienzo-wrap" id="wrap">
+        <svg id="lienzo"></svg>
+        <div id="vacio" class="vacio" hidden>El árbol está vacío. Inserta un contacto o carga la demo 🌱</div>
+      </div>
+      <div class="secuencia" id="secuencia"></div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Contactos por categoría</h2>
+      <div id="categorias" class="barras"></div>
+    </div>
+  </section>
+
+  <!-- ======== Panel derecho ======== -->
+  <aside class="col">
+    <section class="card" id="detalle">
+      <h2>🧩 Detalle del nodo</h2>
+      <p class="mini">Haz clic en cualquier nodo del árbol para ver su nivel, grado, padre, hermano, hijos y factor de balance.</p>
+    </section>
+    <section class="card">
+      <h2>📜 Bitácora</h2>
+      <ul id="bitacora" class="bitacora"></ul>
+    </section>
+  </aside>
+</main>
+
+<div id="toasts"></div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
